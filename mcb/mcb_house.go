@@ -39,6 +39,9 @@ func SaleInfo() {
 			buffer.WriteString(`"]`)
 			fmt.Printf("%d栋，%d单元\n", i, y)
 			total, hostList := parse(url, buffer.String(), navItemBuffer.String(), i)
+			for i2 := range hostList {
+				fmt.Println(hostList[i2])
+			}
 			fmt.Printf("已卖出【%d】套\n", total)
 			saleHouseTotal = saleHouseTotal + total
 		}
@@ -75,7 +78,7 @@ func parse(url string, element string, navItem string, lowNum int) (int, []*Hous
 	}
 	var allHouse []*House
 	err = chromedp.Run(ctx, chromedp.ActionFunc(func(ctx context.Context) error {
-		i := 0
+		i := 1
 		for _, node := range nodes {
 			err := dom.RequestChildNodes(node.NodeID).WithDepth(-1).Do(ctx)
 			if err != nil {
@@ -96,6 +99,7 @@ func parse(url string, element string, navItem string, lowNum int) (int, []*Hous
 				Index:    i,
 			}
 			allHouse = append(allHouse, house)
+			i++
 		}
 		return nil
 	}))
