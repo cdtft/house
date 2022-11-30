@@ -1,7 +1,7 @@
 package main
 
-import "house/mcb"
+import "house/daq"
 
 func main() {
-	mcb.SaleInfo()
+	daq.SaleInfo()
 }

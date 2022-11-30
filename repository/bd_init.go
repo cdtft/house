@@ -1,0 +1,19 @@
+package repository
+
+import (
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"log"
+)
+
+const jdbcUrl = "root:root@tcp(127.0.0.1:3306)/nacos?charset=utf8mb4&parseTime=True&loc=Local"
+
+var DB *gorm.DB
+
+func init() {
+	db, err := gorm.Open(mysql.Open(jdbcUrl), &gorm.Config{})
+	if err != nil {
+		log.Panicln(err)
+	}
+	DB = db
+}

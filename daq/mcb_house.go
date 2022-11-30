@@ -1,4 +1,4 @@
-package mcb
+package daq
 
 import (
 	"bytes"
