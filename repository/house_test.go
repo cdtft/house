@@ -1,4 +1,4 @@
-package house
+package repository
 
 import "testing"
 
@@ -11,7 +11,7 @@ func TestId_test(t *testing.T) {
 		fields fields
 	}{
 		{
-			name: "test",
+			name:   "test",
 			fields: fields{},
 		},
 	}
