@@ -1,9 +1,5 @@
 package repository
 
-import (
-	"fmt"
-)
-
 type House struct {
 	Id       int    //ID
 	FloorNum string //楼层
@@ -13,10 +9,9 @@ type House struct {
 	Index    int    //顺序编码
 }
 
-func (*House) test() {
-	var ids []House
-	DB.Raw("select * from config_info").Scan(&ids)
-	for i := range ids {
-		fmt.Println(ids[i])
-	}
+type HouseRepository struct {
+}
+
+func (*HouseRepository) BatchInsert(houses []House) {
+	DB.Create(&houses)
 }
