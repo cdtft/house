@@ -89,7 +89,7 @@ func parse(url string, element string, navItem string, lowNum int) (int, []*repo
 				HouseNo:  node.Children[1].Children[0].NodeValue,
 				Floorage: node.Children[2].Children[0].NodeValue,
 				Sold:     sold,
-				Index:    i,
+				Idx:      i,
 			}
 			allHouse = append(allHouse, house)
 			i++
