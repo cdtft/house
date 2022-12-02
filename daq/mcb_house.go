@@ -35,6 +35,8 @@ func SaleInfo() {
 			for i2 := range hostList {
 				fmt.Println(hostList[i2])
 			}
+			houseRepository := repository.HouseRepository{}
+			houseRepository.BatchInsert(hostList)
 			fmt.Printf("已卖出【%d】套\n", total)
 			saleHouseTotal = saleHouseTotal + total
 		}
@@ -42,7 +44,7 @@ func SaleInfo() {
 	fmt.Printf("总共卖出【%d】套\n", saleHouseTotal)
 }
 
-func parse(url string, element string, navItem string, lowNum int) (int, []*repository.House) {
+func parse(url string, element string, navItem string, lowNum int) (int, []repository.House) {
 	total := 0
 	ctx, cancel := chromedp.NewContext(
 		context.Background(),
@@ -69,7 +71,7 @@ func parse(url string, element string, navItem string, lowNum int) (int, []*repo
 	if err != nil {
 		log.Fatal(err)
 	}
-	var allHouse []*repository.House
+	var allHouse []repository.House
 	err = chromedp.Run(ctx, chromedp.ActionFunc(func(ctx context.Context) error {
 		i := 1
 		for _, node := range nodes {
@@ -84,12 +86,14 @@ func parse(url string, element string, navItem string, lowNum int) (int, []*repo
 				sold = true
 				total++
 			}
-			house := &repository.House{
-				FloorNum: node.Children[0].Children[0].NodeValue,
-				HouseNo:  node.Children[1].Children[0].NodeValue,
-				Floorage: node.Children[2].Children[0].NodeValue,
-				Sold:     sold,
-				Idx:      i,
+			house := repository.House{
+				FloorNum:   node.Children[0].Children[0].NodeValue,
+				Unit:       strconv.Itoa(lowNum),
+				HouseNo:    node.Children[1].Children[0].NodeValue,
+				Floorage:   node.Children[2].Children[0].NodeValue,
+				Sold:       sold,
+				Idx:        i,
+				CreateTime: time.Now().Format("2006-01-02 15:04:05"),
 			}
 			allHouse = append(allHouse, house)
 			i++

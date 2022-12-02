@@ -18,6 +18,6 @@ func (House) TableName() string {
 type HouseRepository struct {
 }
 
-func (*HouseRepository) BatchInsert(houses []House) {
+func (HouseRepository) BatchInsert(houses []House) {
 	DB.Create(&houses)
 }
