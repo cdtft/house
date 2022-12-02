@@ -32,9 +32,6 @@ func SaleInfo() {
 			buffer.WriteString(`"]`)
 			fmt.Printf("%d栋，%d单元\n", i, y)
 			total, hostList := parse(url, buffer.String(), navItemBuffer.String(), i)
-			for i2 := range hostList {
-				fmt.Println(hostList[i2])
-			}
 			houseRepository := repository.HouseRepository{}
 			houseRepository.BatchInsert(hostList)
 			fmt.Printf("已卖出【%d】套\n", total)
