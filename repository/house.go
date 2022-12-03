@@ -24,6 +24,6 @@ func (HouseRepository) BatchInsert(houses []House) {
 
 func (HouseRepository) SelectByDateString(createTime string) []House {
 	var houseList []House
-	DB.Raw("select id, create_time from `house` where substring(create_time, 1, 10) = ?", createTime).Scan(&houseList)
+	DB.Raw("select * from `house` where substring(create_time, 1, 10) = ?", createTime).Scan(&houseList)
 	return houseList
 }
