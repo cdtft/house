@@ -21,3 +21,9 @@ type HouseRepository struct {
 func (HouseRepository) BatchInsert(houses []House) {
 	DB.Create(&houses)
 }
+
+func (HouseRepository) SelectByDateString(createTime string) []House {
+	var houseList []House
+	DB.Raw("select id, create_time from `house` where substring(create_time, 1, 10) = ?", createTime).Scan(&houseList)
+	return houseList
+}
