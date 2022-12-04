@@ -16,6 +16,8 @@ import (
 const url = `https://zw.cdzjryb.com/roompricezjw/index.html?param=01B22707BDA6122314D9A47242F86EED9377E62F4C7B9D79884D32930ABC173D7B475137ED7750492A0539B4C0CE3A8D`
 
 func SaleInfo() {
+	taskMapper := repository.TaskMapper{}
+	taskId := taskMapper.AddTask()
 	saleHouseTotal := 0
 	for i := 1; i <= 7; i++ {
 		for y := 1; y <= 2; y++ {
@@ -31,17 +33,18 @@ func SaleInfo() {
 			buffer.WriteString(strconv.Itoa(y))
 			buffer.WriteString(`"]`)
 			fmt.Printf("%d栋，%d单元\n", i, y)
-			total, hostList := parse(url, buffer.String(), navItemBuffer.String(), i)
+			total, hostList := parse(url, buffer.String(), navItemBuffer.String(), i, taskId)
 			houseRepository := repository.HouseRepository{}
 			houseRepository.BatchInsert(hostList)
 			fmt.Printf("已卖出【%d】套\n", total)
 			saleHouseTotal = saleHouseTotal + total
 		}
 	}
+	taskMapper.UpdateTotalById(taskId, saleHouseTotal)
 	fmt.Printf("总共卖出【%d】套\n", saleHouseTotal)
 }
 
-func parse(url string, element string, navItem string, lowNum int) (int, []repository.House) {
+func parse(url string, element string, navItem string, lowNum int, taskId uint) (int, []repository.House) {
 	total := 0
 	ctx, cancel := chromedp.NewContext(
 		context.Background(),
@@ -90,6 +93,7 @@ func parse(url string, element string, navItem string, lowNum int) (int, []repos
 				Floorage:   node.Children[2].Children[0].NodeValue,
 				Sold:       sold,
 				Idx:        i,
+				TaskId:     taskId,
 				CreateTime: time.Now().Format("2006-01-02 15:04:05"),
 			}
 			allHouse = append(allHouse, house)

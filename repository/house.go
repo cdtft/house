@@ -9,6 +9,7 @@ type House struct {
 	Floorage   string //建筑面积
 	Sold       bool   //是否售卖
 	CreateTime string //创建时间
+	TaskId     uint   //任务号
 }
 
 func (House) TableName() string {

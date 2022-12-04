@@ -4,4 +4,4 @@ import "house/daq"
 
 func main() {
 	daq.SaleInfo()
-}
+}git
