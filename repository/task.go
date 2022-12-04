@@ -25,3 +25,9 @@ func (TaskMapper) AddTask() uint {
 func (TaskMapper) UpdateTotalById(id uint, total int) {
 	DB.Exec("update task set total = ? where id = ?", total, id)
 }
+
+func (TaskMapper) FindAll() []Task {
+	var tasks []Task
+	DB.Raw("select * from task").Scan(&tasks)
+	return tasks
+}
