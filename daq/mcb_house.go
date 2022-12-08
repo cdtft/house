@@ -79,7 +79,7 @@ func parse(url string, element string, navItem string, lowNum int, taskId uint) 
 			if err != nil {
 				return err
 			}
-			time.Sleep(time.Second)
+			time.Sleep(time.Second * 2)
 			value := node.Children[5].Children[0].Children[1].NodeValue
 			sold := false
 			if value != "可售" {

@@ -1,7 +1,6 @@
 package chart
 
 import (
-	"house/repository"
 	"os"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
@@ -9,18 +8,6 @@ import (
 )
 
 // generate random data for bar chart
-func generateBarItems() ([]opts.BarData, []string) {
-	taskMapper := repository.TaskMapper{}
-	taskList := taskMapper.FindAll()
-
-	items := make([]opts.BarData, 0)
-	axis := make([]string, 0)
-	for i := range taskList {
-		items = append(items, opts.BarData{Value: taskList[i].Total})
-		axis = append(axis, taskList[i].TaskTime)
-	}
-	return items, axis
-}
 
 func CreateBar() {
 	items, axis := generateBarItems()
