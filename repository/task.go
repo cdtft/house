@@ -31,3 +31,9 @@ func (TaskMapper) FindAll() []Task {
 	DB.Raw("select * from task").Scan(&tasks)
 	return tasks
 }
+
+func (TaskMapper) FindLatestTaskIds() []uint {
+	var ids []uint
+	DB.Raw("select id from task order by id desc limit 2").Scan(&ids)
+	return ids
+}
