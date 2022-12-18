@@ -2,6 +2,7 @@ package repository
 
 type House struct {
 	ID         uint   `gorm:"primaryKey"`
+	BuildNO    string //楼号
 	Unit       string //单元号
 	FloorNum   string //楼层
 	HouseNo    string //房号
@@ -26,5 +27,11 @@ func (HouseRepository) BatchInsert(houses []House) {
 func (HouseRepository) SelectByDateString(createTime string) []House {
 	var houseList []House
 	DB.Raw("select * from `house` where substring(create_time, 1, 10) = ?", createTime).Scan(&houseList)
+	return houseList
+}
+
+func (HouseRepository) FindByTaskId(taskId uint) []House {
+	var houseList []House
+	DB.Raw("select * from `house` where task_id = ? and sold = true", taskId).Scan(&houseList)
 	return houseList
 }

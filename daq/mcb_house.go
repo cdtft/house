@@ -33,7 +33,7 @@ func SaleInfo() {
 			buffer.WriteString(strconv.Itoa(y))
 			buffer.WriteString(`"]`)
 			fmt.Printf("%d栋，%d单元\n", i, y)
-			total, hostList := parse(url, buffer.String(), navItemBuffer.String(), i, taskId)
+			total, hostList := parse(url, buffer.String(), navItemBuffer.String(), i, y, taskId)
 			houseRepository := repository.HouseRepository{}
 			houseRepository.BatchInsert(hostList)
 			fmt.Printf("已卖出【%d】套\n", total)
@@ -44,7 +44,7 @@ func SaleInfo() {
 	fmt.Printf("总共卖出【%d】套\n", saleHouseTotal)
 }
 
-func parse(url string, element string, navItem string, lowNum int, taskId uint) (int, []repository.House) {
+func parse(url string, element string, navItem string, lowNum int, unit int, taskId uint) (int, []repository.House) {
 	total := 0
 	ctx, cancel := chromedp.NewContext(
 		context.Background(),
@@ -54,7 +54,7 @@ func parse(url string, element string, navItem string, lowNum int, taskId uint) 
 		chromedp.Navigate(url),
 		chromedp.WaitVisible(`body`),
 	)
-	if lowNum != 7 {
+	if lowNum != 2 {
 		err = chromedp.Run(ctx, chromedp.Click(navItem, chromedp.NodeVisible))
 		if err != nil {
 			log.Fatal(err)
@@ -88,7 +88,8 @@ func parse(url string, element string, navItem string, lowNum int, taskId uint) 
 			}
 			house := repository.House{
 				FloorNum:   node.Children[0].Children[0].NodeValue,
-				Unit:       strconv.Itoa(lowNum),
+				BuildNO:    strconv.Itoa(lowNum),
+				Unit:       strconv.Itoa(unit),
 				HouseNo:    node.Children[1].Children[0].NodeValue,
 				Floorage:   node.Children[2].Children[0].NodeValue,
 				Sold:       sold,
