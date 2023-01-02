@@ -19,11 +19,8 @@ func compareLatestTaskSaleInfo() {
 	for i := range secondHouse {
 		house := secondHouse[i]
 		key := house.BuildNO + "-" + house.Unit + "-" + house.HouseNo + "-" + strconv.Itoa(house.Idx)
-		log.Printf("%d, %s\n", i, key)
 		secondHouseMap[key] = true
-		log.Println(len(secondHouseMap))
 	}
-	log.Println(len(secondHouseMap))
 	for i := range firstHouse {
 		house := firstHouse[i]
 		key := house.BuildNO + "-" + house.Unit + "-" + house.HouseNo + "-" + strconv.Itoa(house.Idx)

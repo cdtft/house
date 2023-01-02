@@ -19,29 +19,37 @@ func SaleInfo() {
 	taskMapper := repository.TaskMapper{}
 	taskId := taskMapper.AddTask()
 	saleHouseTotal := 0
+	ch := make(chan int, 10)
 	for i := 1; i <= 7; i++ {
 		for y := 1; y <= 2; y++ {
-			var navItemBuffer bytes.Buffer
-			navItemBuffer.WriteString(`.rp-nav-item[data-val="`)
-			navItemBuffer.WriteString(strconv.Itoa(i))
-			navItemBuffer.WriteString(`"]`)
-
-			var buffer bytes.Buffer
-			buffer.WriteString(`.rp-subnav-item[data-parentval="`)
-			buffer.WriteString(strconv.Itoa(i))
-			buffer.WriteString(`"][data-val="`)
-			buffer.WriteString(strconv.Itoa(y))
-			buffer.WriteString(`"]`)
-			fmt.Printf("%d栋，%d单元\n", i, y)
-			total, hostList := parse(url, buffer.String(), navItemBuffer.String(), i, y, taskId)
-			houseRepository := repository.HouseRepository{}
-			houseRepository.BatchInsert(hostList)
-			fmt.Printf("已卖出【%d】套\n", total)
-			saleHouseTotal = saleHouseTotal + total
+			go doSaleInfo(i, y, taskId, ch)
 		}
 	}
 	taskMapper.UpdateTotalById(taskId, saleHouseTotal)
+	for i := 0; i < 14; i++ {
+		saleNum := <-ch
+		saleHouseTotal = saleHouseTotal + saleNum
+	}
 	fmt.Printf("总共卖出【%d】套\n", saleHouseTotal)
+}
+
+func doSaleInfo(i int, y int, taskId uint, ch chan<- int) {
+	var navItemBuffer bytes.Buffer
+	navItemBuffer.WriteString(`.rp-nav-item[data-val="`)
+	navItemBuffer.WriteString(strconv.Itoa(i))
+	navItemBuffer.WriteString(`"]`)
+
+	var buffer bytes.Buffer
+	buffer.WriteString(`.rp-subnav-item[data-parentval="`)
+	buffer.WriteString(strconv.Itoa(i))
+	buffer.WriteString(`"][data-val="`)
+	buffer.WriteString(strconv.Itoa(y))
+	buffer.WriteString(`"]`)
+	total, hostList := parse(url, buffer.String(), navItemBuffer.String(), i, y, taskId)
+	houseRepository := repository.HouseRepository{}
+	houseRepository.BatchInsert(hostList)
+	fmt.Printf("\"%d栋，%d单元 已卖出【%d】套\n", i, y, total)
+	ch <- total
 }
 
 func parse(url string, element string, navItem string, lowNum int, unit int, taskId uint) (int, []repository.House) {
@@ -54,7 +62,7 @@ func parse(url string, element string, navItem string, lowNum int, unit int, tas
 		chromedp.Navigate(url),
 		chromedp.WaitVisible(`body`),
 	)
-	if lowNum != 2 {
+	if lowNum != 1 {
 		err = chromedp.Run(ctx, chromedp.Click(navItem, chromedp.NodeVisible))
 		if err != nil {
 			log.Fatal(err)
